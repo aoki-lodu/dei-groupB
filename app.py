@@ -55,7 +55,7 @@ with st.sidebar:
     st.header("🎮 ゲーム操作盤")
     st.info("👇 メンバーや施策を選んでください")
     
-    # ここでエラーが出ていたので、書き方を修正しました
+    # リスト作成を分けて記述（エラー防止）
     character_names = [c["name"] for c in CHARACTERS_DB]
     selected_char_names = st.multiselect(
         "👤 参加メンバー",
@@ -80,7 +80,7 @@ active_policies = [p for p in POLICIES_DB if p["name"] in selected_policy_names]
 # ==========================================
 total_power = 0
 active_shields = set()
-active_recruits = set() # 採用ターゲットのセット
+active_recruits = set()
 
 # 施策の効果を集計
 for pol in active_policies:
@@ -121,16 +121,14 @@ for char in active_chars:
 # ==========================================
 st.title("🎲 DE&I 組織シミュレーター")
 
-# スコアボード（4列に変更しました）
+# スコアボード
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.metric("🏆 チーム仕事力", f"{total_power} pt")
 with c2:
-    # 離職防止（旧ガード）
     shield_text = " ".join(sorted(list(active_shields))) if active_shields else "ー"
     st.metric("🛡️ 離職防止中", shield_text)
 with c3:
-    # 【追加】採用強化中の属性を表示
     recruit_text = " ".join(sorted(list(active_recruits))) if active_recruits else "ー"
     st.metric("🔵 採用強化中", recruit_text)
 with c4:
@@ -165,7 +163,6 @@ else:
                 bg_color = "#ffebee"
                 header_text = "⚠️ RISK (危険)"
                 risk_icons = " ".join(res['risks'])
-                # 😱を削除し、テキストをシンプルに
                 footer_text = f"{risk_icons} が出たらアウト" 
                 footer_color = "#ff1744"
 
@@ -175,20 +172,22 @@ else:
             for tag in res["tags"]:
                 tags_html += f"<span style='background:#fff; border:1px solid #ccc; border-radius:4px; padding:2px 5px; font-size:0.8em; margin-right:5px;'>{tag}</span>"
 
-            # HTML生成
-            html_card = f"""
-<div style="border: 4px solid {border_color}; border-radius: 12px; padding: 15px; background-color: {bg_color}; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="font-weight:bold; color:{border_color}; font-size:1.1em; margin-bottom:5px;">{header_text}</div>
-    <h3 style="margin:0 0 5px 0;">{res['data']['name']}</h3>
-    <div style="color:#555; font-size:0.9em; margin-bottom:10px;">属性: {''.join(res['data']['icons'])}</div>
-    
-    <div style="font-size:0.8em; margin-bottom:2px;">仕事力: {res['power']}</div>
-    <div style="background-color: #ddd; height: 12px; border-radius: 6px; width: 100%; margin-bottom: 10px;">
-        <div style="background-color: {border_color}; width: {bar_width}%; height: 100%; border-radius: 6px;"></div>
-    </div>
-    <div style="margin-bottom: 10px;">{tags_html}</div>
-    <hr style="border-top: 2px dashed {border_color}; opacity: 0.3; margin: 10px 0;">
-    <div style="font-weight:bold; color:{footer_color}; text-align:center;">{footer_text}</div>
-</div>
-"""
+            # HTML生成（ここを書き換えました：エラーが出にくい書き方）
+            icons_str = "".join(res['data']['icons'])
+            
+            html_card = (
+                f'<div style="border: 4px solid {border_color}; border-radius: 12px; padding: 15px; background-color: {bg_color}; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">'
+                f'<div style="font-weight:bold; color:{border_color}; font-size:1.1em; margin-bottom:5px;">{header_text}</div>'
+                f'<h3 style="margin:0 0 5px 0;">{res["data"]["name"]}</h3>'
+                f'<div style="color:#555; font-size:0.9em; margin-bottom:10px;">属性: {icons_str}</div>'
+                f'<div style="font-size:0.8em; margin-bottom:2px;">仕事力: {res["power"]}</div>'
+                f'<div style="background-color: #ddd; height: 12px; border-radius: 6px; width: 100%; margin-bottom: 10px;">'
+                f'<div style="background-color: {border_color}; width: {bar_width}%; height: 100%; border-radius: 6px;"></div>'
+                f'</div>'
+                f'<div style="margin-bottom: 10px;">{tags_html}</div>'
+                f'<hr style="border-top: 2px dashed {border_color}; opacity: 0.3; margin: 10px 0;">'
+                f'<div style="font-weight:bold; color:{footer_color}; text-align:center;">{footer_text}</div>'
+                f'</div>'
+            )
+            
             st.markdown(html_card, unsafe_allow_html=True)

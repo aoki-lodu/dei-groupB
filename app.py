@@ -4,7 +4,7 @@ import random
 import time
 
 # ==========================================
-# 0. 設定 & 記憶領域の初期化
+# 0. 設定 & データ定義
 # ==========================================
 st.set_page_config(page_title="LODU Game", layout="wide", initial_sidebar_state="expanded")
 
@@ -17,7 +17,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ゲームデータ定義
 ICONS = {"くらし(💚)": "💚", "キャリア(📖)": "📖", "グローバル(🌏)": "🌏", "アイデンティティ(🌈)": "🌈", "フェア(⚖️)": "⚖️"}
 RISK_MAP = {2: "💚", 3: "📖", 4: "🌏", 5: "🌈", 6: "⚖️"}
 
@@ -41,10 +40,22 @@ POLICIES_DB = [
     {"name": "ATSバイアスアラート", "target": ["📖", "🌈"], "power": 0, "type": ["recruit"]},
 ]
 
-# --- ここが修正ポイント：安全な初期化 ---
+# ==========================================
+# 1. メンバー削除ロジック（ここを最初に行う！）
+# ==========================================
+# 初期化
 if "selected_members" not in st.session_state:
-    # 最初は3人選んでおく
     st.session_state.selected_members = [c["name"] for c in CHARACTERS_DB[:3]]
+
+# 「退職予約」がある場合、ここで実際にリストから削除して更新する
+if "pending_removal" in st.session_state and st.session_state.pending_removal:
+    remove_list = st.session_state.pending_removal
+    # リストから削除
+    new_members = [m for m in st.session_state.selected_members if m not in remove_list]
+    # 更新（Widgetが作られる前なのでエラーにならない！）
+    st.session_state.selected_members = new_members
+    # 予約をクリア
+    del st.session_state.pending_removal
 
 # ==========================================
 # 2. サイドバー
@@ -52,7 +63,7 @@ if "selected_members" not in st.session_state:
 with st.sidebar:
     st.header("🎮 ゲーム操作盤")
     
-    # default引数を削除し、keyだけで管理するように変更（エラー回避）
+    # ウィジェットの作成
     selected_char_names = st.multiselect(
         "👤 参加メンバー",
         [c["name"] for c in CHARACTERS_DB],
@@ -70,6 +81,8 @@ with st.sidebar:
     st.divider()
     if st.button("🔄 リセット", type="primary"):
         st.session_state.selected_members = [c["name"] for c in CHARACTERS_DB[:3]]
+        if "pending_removal" in st.session_state:
+            del st.session_state.pending_removal
         st.rerun()
 
 # データの抽出
@@ -159,9 +172,8 @@ with col_dice_result:
                 
                 time.sleep(3)
                 
-                # 安全な削除処理
-                new_members = [m for m in st.session_state.selected_members if m not in dropouts]
-                st.session_state.selected_members = new_members
+                # 【修正ポイント】ここで直接削除せず、「予約」だけして再起動する
+                st.session_state.pending_removal = dropouts
                 st.rerun()
 
             elif risk_attr in active_shields:

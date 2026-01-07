@@ -1,24 +1,39 @@
 import streamlit as st
 import pandas as pd
-import random
-import time
 
 # ==========================================
 # 0. 設定 & データ定義
 # ==========================================
 st.set_page_config(page_title="LODU Game", layout="wide", initial_sidebar_state="expanded")
 
-# カスタムCSS
+# カスタムCSS（見やすくする ＆ 誤操作防止）
 st.markdown("""
 <style>
     .big-font { font-size:20px !important; font-weight: bold; }
     .card { background-color: #f0f2f6; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #ff4b4b; }
     .card-safe { border-left: 5px solid #00c853; }
+    
+    /* ↓↓↓ 追加：一括削除ボタン（右側の×）を隠す魔法 ↓↓↓ */
+    button[title="Clear values"] {
+        display: none !important;
+    }
+    /* ↑↑↑ これで誤って全員消す事故がなくなります ↑↑↑ */
+    
 </style>
 """, unsafe_allow_html=True)
 
+# ゲームデータ
 ICONS = {"くらし(💚)": "💚", "キャリア(📖)": "📖", "グローバル(🌏)": "🌏", "アイデンティティ(🌈)": "🌈", "フェア(⚖️)": "⚖️"}
-RISK_MAP = {2: "💚", 3: "📖", 4: "🌏", 5: "🌈", 6: "⚖️"}
+
+# 出目とリスクの対応表（画面表示用）
+RISK_MAP_DISPLAY = {
+    "1": "🎉 セーフ",
+    "2": "💚 くらし",
+    "3": "📖 キャリア",
+    "4": "🌏 グローバル",
+    "5": "🌈 アイデンティティ",
+    "6": "⚖️ フェア"
+}
 
 CHARACTERS_DB = [
     {"name": "白石 凛子", "base": 3, "icons": ["🌏", "🌈"], "role": "Manager"},
@@ -41,33 +56,18 @@ POLICIES_DB = [
 ]
 
 # ==========================================
-# 1. メンバー削除ロジック（ここを最初に行う！）
-# ==========================================
-# 初期化
-if "selected_members" not in st.session_state:
-    st.session_state.selected_members = [c["name"] for c in CHARACTERS_DB[:3]]
-
-# 「退職予約」がある場合、ここで実際にリストから削除して更新する
-if "pending_removal" in st.session_state and st.session_state.pending_removal:
-    remove_list = st.session_state.pending_removal
-    # リストから削除
-    new_members = [m for m in st.session_state.selected_members if m not in remove_list]
-    # 更新（Widgetが作られる前なのでエラーにならない！）
-    st.session_state.selected_members = new_members
-    # 予約をクリア
-    del st.session_state.pending_removal
-
-# ==========================================
-# 2. サイドバー
+# 1. サイドバー（入力）
 # ==========================================
 with st.sidebar:
     st.header("🎮 ゲーム操作盤")
     
-    # ウィジェットの作成
+    st.info("👇 メンバーや施策を選んでください")
+    
+    # シンプルな選択機能
     selected_char_names = st.multiselect(
         "👤 参加メンバー",
         [c["name"] for c in CHARACTERS_DB],
-        key="selected_members"
+        default=[c["name"] for c in CHARACTERS_DB[:3]] # 初期値
     )
     
     st.divider()
@@ -77,39 +77,37 @@ with st.sidebar:
         [p["name"] for p in POLICIES_DB],
         default=[]
     )
-    
-    st.divider()
-    if st.button("🔄 リセット", type="primary"):
-        st.session_state.selected_members = [c["name"] for c in CHARACTERS_DB[:3]]
-        if "pending_removal" in st.session_state:
-            del st.session_state.pending_removal
-        st.rerun()
 
 # データの抽出
 active_chars = [c for c in CHARACTERS_DB if c["name"] in selected_char_names]
 active_policies = [p for p in POLICIES_DB if p["name"] in selected_policy_names]
 
 # ==========================================
-# 3. 計算ロジック
+# 2. 計算ロジック
 # ==========================================
 total_power = 0
 active_shields = set()
+
+# 盾の判定
 for pol in active_policies:
     if "shield" in pol["type"]:
         for t in pol["target"]:
             active_shields.add(t)
 
+# メンバーごとの計算
 char_results = []
 for char in active_chars:
     current_power = char["base"]
     status_tags = []
     
+    # 施策効果（パワーアップ・昇進・採用）
     for pol in active_policies:
         if set(char["icons"]) & set(pol["target"]):
             current_power += pol["power"]
             if "promote" in pol["type"] and "🟢昇進" not in status_tags: status_tags.append("🟢昇進")
             if "recruit" in pol["type"] and "🔵採用" not in status_tags: status_tags.append("🔵採用")
             
+    # リスク判定（盾がない属性を抽出）
     risks = [icon for icon in char["icons"] if icon not in active_shields]
     is_safe = len(risks) == 0 
     
@@ -123,10 +121,11 @@ for char in active_chars:
     })
 
 # ==========================================
-# 4. メイン画面レイアウト
+# 3. メイン画面レイアウト
 # ==========================================
 st.title("🎲 DE&I 組織シミュレーター")
 
+# スコアボード
 c1, c2, c3 = st.columns(3)
 with c1:
     st.metric("🏆 チーム仕事力", f"{total_power} pt")
@@ -141,66 +140,43 @@ with c3:
 
 st.divider()
 
-# ダイスロールセクション
-st.subheader("🎲 運命のダイスロール")
-col_dice_btn, col_dice_result = st.columns([1, 2])
-
-with col_dice_btn:
-    roll_btn = st.button("サイコロを振る！", type="primary", use_container_width=True)
-
-with col_dice_result:
-    if roll_btn:
-        with st.spinner("コロコロ..."):
-            time.sleep(1)
-            dice = random.randint(1, 6)
-        
-        st.markdown(f"### 出目: **【 {dice} 】**")
-        
-        if dice == 1:
-            st.balloons()
-            st.success("🎉 **セーフ！** トラブルは起きませんでした！")
-        else:
-            risk_attr = RISK_MAP.get(dice)
-            st.warning(f"⚠️ 対象: **{risk_attr}** の属性を持つメンバー")
-            
-            # 離職判定
-            dropouts = [res["data"]["name"] for res in char_results if risk_attr in res["risks"]]
-            
-            if dropouts:
-                st.error(f"😱 **離職発生！**: {', '.join(dropouts)} さんが退職します...")
-                st.write("🔄 メンバーリストから削除しています...")
-                
-                time.sleep(3)
-                
-                # 【修正ポイント】ここで直接削除せず、「予約」だけして再起動する
-                st.session_state.pending_removal = dropouts
-                st.rerun()
-
-            elif risk_attr in active_shields:
-                st.info(f"🛡️ **ガード成功！** 施策のおかげで {risk_attr} のメンバーは守られました！")
-            else:
-                st.success("💨 該当するメンバーがいなかったのでセーフ！")
-
-st.divider()
+# サイコロ対応表（アナログプレイ用）
+with st.expander("🎲 サイコロの出目対応表を見る（クリックで開閉）"):
+    cols = st.columns(6)
+    for i, (num, desc) in enumerate(RISK_MAP_DISPLAY.items()):
+        with cols[i]:
+            st.markdown(f"**{num}**: {desc}")
 
 st.subheader("📊 組織メンバーの状態")
+st.caption("リアルサイコロを振って、危険マーク（⚠️）がついている属性が出たら、そのメンバーは離職です。サイドバーの名前横の「×」で削除してください。")
 
+# メンバーカード表示
 cols = st.columns(3)
 if not char_results:
-    st.info("メンバーがいません。サイドバーから追加してください。")
+    st.info("👈 サイドバーからメンバーを追加してください")
 else:
     for i, res in enumerate(char_results):
         with cols[i % 3]:
+            # カード枠のデザイン
+            border_style = "card-safe" if res["is_safe"] else "card"
             emoji_status = "🛡️鉄壁" if res["is_safe"] else "⚠️危険"
+            
             with st.container():
                 st.markdown(f"**{res['data']['name']}**")
                 st.caption(f"属性: {''.join(res['data']['icons'])}")
+                
+                # 仕事力バー
                 st.progress(min(res["power"] / 10, 1.0), text=f"仕事力: {res['power']}")
+                
+                # タグ（昇進など）
                 if res["tags"]:
                     st.markdown(" ".join([f"`{t}`" for t in res["tags"]]))
-                else:
-                    st.caption("特殊効果なし")
+                
+                st.divider()
+                
+                # リスク表示
                 if res["is_safe"]:
-                    st.success(f"{emoji_status}")
+                    st.success(f"{emoji_status}: ガード成功中")
                 else:
-                    st.error(f"{emoji_status}: {''.join(res['risks'])}が出たらアウト")
+                    risk_str = " ".join(res['risks'])
+                    st.error(f"{emoji_status}: **{risk_str}** が出たらアウト")

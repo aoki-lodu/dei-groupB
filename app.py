@@ -50,7 +50,7 @@ RISK_MAP_DISPLAY = {
     "1": "🎉 セーフ", "2": "💚 くらし", "3": "📖 キャリア", 
     "4": "🌏 グローバル", "5": "🌈 アイデンティティ", "6": "⚖️ フェア"
 }
-# 並び順の定義
+# 並び順の定義（メンバー用）
 SORT_ORDER = ['💚', '📖', '🌏', '🌈', '⚖️']
 
 # --- ✅ 人財データ ---
@@ -153,62 +153,56 @@ CHARACTERS_DB = [
     {"name": "Mei Tanaka", "icons": ["📖", "🌈", "⚖️"], "base": 2},
 ]
 
-# --- ✅ 施策データ ---
+# --- ✅ 施策データ（画像の順番通りに再ソート） ---
 POLICIES_DB = [
     {"name": "短時間勤務", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
     {"name": "ケア支援（保育/介護補助）", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
     {"name": "ユニーバーサルデザインサポート", "target": ["💚"], "cost": 3, "power": 2, "type": ["shield", "power"]},
     {"name": "各種申請ガイド＆相談窓口", "target": ["💚"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
     {"name": "ウェルビーイング表彰", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
-    {"name": "就労在留支援", "target": ["🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
     {"name": "転勤支援", "target": ["🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
-    {"name": "タレントマネジメントシステムの活用", "target": ["🌈", "📖", "⚖️"], "cost": 2, "power": 0, "type": ["recruit"]},
+    {"name": "就労在留支援", "target": ["🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
+    {"name": "メンター制度", "target": ["💚", "📖"], "cost": 2, "power": 1, "type": ["promote", "shield"]},
+    {"name": "リターンシップ(復職支援)", "target": ["💚", "📖"], "cost": 2, "power": 0, "type": ["recruit", "promote"]},
+    {"name": "復帰ブリッジ（育休/介護）", "target": ["💚", "📖"], "cost": 1, "power": 1, "type": ["promote", "shield", "power"]},
+    {"name": "テレワーク・ワーケーション制度", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
+    {"name": "多言語対応", "target": ["🌏", "💚"], "cost": 2, "power": 2, "type": ["recruit", "power"]},
+    {"name": "サテライト/在宅手当", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
+    {"name": "障がい者インクルージョンコミュニティ", "target": ["💚", "🌈"], "cost": 2, "power": 0, "type": ["promote", "shield"]},
+    {"name": "通勤交通費支給", "target": ["💚", "⚖️"], "cost": 1, "power": 0, "type": ["recruit"]},
+    {"name": "1on1", "target": ["📖", "🌏"], "cost": 2, "power": 3, "type": ["shield", "power"]},
+    {"name": "アルムナイ/ブーメラン採用", "target": ["📖", "🌏"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
+    {"name": "グローバルタレントマネジメント", "target": ["📖", "🌏"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
+    {"name": "社内公募・FA制度", "target": ["📖", "🌈"], "cost": 2, "power": 1, "type": ["promote", "shield", "power"]},
+    {"name": "指導員制度", "target": ["📖", "🌈"], "cost": 2, "power": 2, "type": ["promote", "power"]},
+    {"name": "アンコンシャス・バイアス研修", "target": ["📖", "🌈"], "cost": 2, "power": 0, "type": ["recruit", "shield"]},
+    {"name": "DVO(DNP価値目標制度)制度と評価制度", "target": ["📖", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
+    {"name": "キャリア自律支援金の支給", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["promote", "power"]},
+    {"name": "職群別キャリア・スキルマップの可視化", "target": ["📖", "⚖️"], "cost": 1, "power": 1, "type": ["promote", "power"]},
+    {"name": "社内複業制度", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
     {"name": "同性パートナーシップ制度", "target": ["⚖️", "🌈"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
     {"name": "スポンサーシッププログラム", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["promote"]},
+    {"name": "面接官トレーニング", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
     {"name": "インクルージョンループ", "target": ["🌈", "⚖️"], "cost": 2, "power": 3, "type": ["promote", "shield", "power"]},
     {"name": "キャリアサポート休暇・ライフサポート休暇", "target": ["🌈", "⚖️"], "cost": 2, "power": 1, "type": ["shield", "power"]},
     {"name": "施設（社員食堂、診療所、契約保養施設等）の充実", "target": ["🌈", "⚖️"], "cost": 2, "power": 0, "type": ["recruit", "shield"]},
     {"name": "マネジメントフィードバック（360度評価）", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["promote", "shield"]},
-    {"name": "アンコンシャス・バイアス研修", "target": ["🌈", "📖"], "cost": 2, "power": 0, "type": ["recruit", "shield"]},
-    {"name": "指導員制度", "target": ["📖", "🌈"], "cost": 2, "power": 2, "type": ["promote", "power"]},
-    {"name": "障がい者インクルージョンコミュニティ", "target": ["💚", "🌈"], "cost": 2, "power": 0, "type": ["promote", "shield"]},
-    {"name": "オープン・ドア・ルーム（内部通報制度）", "target": ["🌈", "📖", "⚖️"], "cost": 1, "power": 0, "type": ["shield"]},
-    {"name": "DVO(DNP価値目標制度)制度と評価制度", "target": ["📖", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
     {"name": "ミドル・シニア向けキャリア自律支援", "target": ["📖", "💚", "⚖️"], "cost": 2, "power": 1, "type": ["recruit", "power"]},
-    {"name": "リターンシップ(復職支援)", "target": ["📖", "💚"], "cost": 2, "power": 0, "type": ["recruit", "promote"]},
-    {"name": "1on1", "target": ["📖", "🌏"], "cost": 2, "power": 3, "type": ["shield", "power"]},
-    {"name": "職群別キャリア・スキルマップの可視化", "target": ["📖", "⚖️"], "cost": 1, "power": 1, "type": ["promote", "power"]},
-    {"name": "メンター制度", "target": ["💚", "📖"], "cost": 2, "power": 1, "type": ["promote", "shield"]},
-    {"name": "社内公募・FA制度", "target": ["📖", "🌈"], "cost": 2, "power": 1, "type": ["promote", "shield", "power"]},
-    {"name": "キャリア自律支援金の支給", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["promote", "power"]},
-    {"name": "復帰ブリッジ（育休/介護）", "target": ["💚", "📖"], "cost": 1, "power": 1, "type": ["promote", "shield", "power"]},
-    {"name": "アルムナイ/ブーメラン採用", "target": ["📖", "🌏"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
-    {"name": "社内複業制度", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
-    {"name": "グローバルタレントマネジメント", "target": ["📖", "🌏"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
-    {"name": "テレワーク・ワーケーション制度", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
-    {"name": "多言語対応", "target": ["🌏", "💚"], "cost": 2, "power": 2, "type": ["recruit", "power"]},
-    {"name": "面接官トレーニング", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
-    {"name": "通勤交通費支給", "target": ["💚", "⚖️"], "cost": 1, "power": 0, "type": ["recruit"]},
-    {"name": "サテライト/在宅手当", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
+    {"name": "オープン・ドア・ルーム（内部通報制度）", "target": ["🌈", "📖", "⚖️"], "cost": 1, "power": 0, "type": ["shield"]},
+    {"name": "タレントマネジメントシステムの活用", "target": ["🌈", "📖", "⚖️"], "cost": 2, "power": 0, "type": ["recruit"]},
 ]
 
 # ソート用関数 (指定順: 💚 > 📖 > 🌏 > 🌈 > ⚖️ > 複合)
 def get_sort_priority_icons(icons_list):
-    # 複合属性（2つ以上）は後ろへ
-    if len(icons_list) > 1:
-        return 99
-    
-    # 単独属性の指定順
+    if len(icons_list) > 1: return 99
     icon = icons_list[0]
-    if icon in SORT_ORDER:
-        return SORT_ORDER.index(icon)
-    return 50
+    return SORT_ORDER.index(icon) if icon in SORT_ORDER else 50
 
-# メンバーのソート（メンバーも同様のルールで見やすく）
+# メンバーのソート
 sorted_chars = sorted(CHARACTERS_DB, key=lambda x: get_sort_priority_icons(x['icons']))
 
-# 施策のソート（関数を適用）
-sorted_policies = sorted(POLICIES_DB, key=lambda x: get_sort_priority_icons(x['target']))
+# 施策のソートはせず、DBの並び順（画像の順）をそのまま使う
+sorted_policies = POLICIES_DB
 
 # ==========================================
 # 1. スマホ対応入力エリア
@@ -379,7 +373,7 @@ if active_policies:
     for pol in active_policies:
         # タグ生成
         ptags = []
-        # Cost表示は削除しました
+        # Cost表示は削除
         
         # パワーが0より大きい場合のみ表示
         if pol["power"] > 0: ptags.append(f"力+{pol['power']}")

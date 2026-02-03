@@ -1,5 +1,5 @@
 import streamlit as st
-import pandas as pd  # データフレーム表示用に必要
+import pandas as pd
 
 # ==========================================
 # 0. 設定 & データ定義
@@ -45,12 +45,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ゲームデータ
+# --- 定数定義 ---
 RISK_MAP_DISPLAY = {
     "1": "🎉 セーフ", "2": "💚 くらし", "3": "📖 キャリア", 
     "4": "🌏 グローバル", "5": "🌈 アイデンティティ", "6": "⚖️ フェア"
 }
-# 並び順の定義（メンバー用）
 SORT_ORDER = ['💚', '📖', '🌏', '🌈', '⚖️']
 
 # --- ✅ 人財データ ---
@@ -192,21 +191,30 @@ POLICIES_DB = [
     {"name": "タレントマネジメントシステムの活用", "target": ["🌈", "📖", "⚖️"], "cost": 2, "power": 0, "type": ["recruit"]},
 ]
 
-# ソート用関数
-def get_sort_priority_icons(icons_list):
-    if len(icons_list) > 1: return 99
-    icon = icons_list[0]
-    return SORT_ORDER.index(icon) if icon in SORT_ORDER else 50
+# ソート用関数（キャッシュ化して高速化）
+@st.cache_data
+def get_sorted_data():
+    def get_sort_priority_icons(icons_list):
+        if len(icons_list) > 1: return 99
+        icon = icons_list[0]
+        return SORT_ORDER.index(icon) if icon in SORT_ORDER else 50
+    
+    sorted_chars = sorted(CHARACTERS_DB, key=lambda x: get_sort_priority_icons(x['icons']))
+    sorted_policies = POLICIES_DB
+    return sorted_chars, sorted_policies
 
-# メンバーのソート
-sorted_chars = sorted(CHARACTERS_DB, key=lambda x: get_sort_priority_icons(x['icons']))
-# 施策のソート
-sorted_policies = POLICIES_DB
+sorted_chars, sorted_policies = get_sorted_data()
 
 # ==========================================
 # 1. スマホ対応入力エリア (st.dataframe版)
 # ==========================================
 st.title("🎲 DE&I 組織シミュレーター")
+
+# セッション状態の初期化
+if "selected_char_rows" not in st.session_state:
+    st.session_state.selected_char_rows = []
+if "selected_policy_rows" not in st.session_state:
+    st.session_state.selected_policy_rows = []
 
 with st.expander("⚙️ メンバーと施策を選ぶ (ここをタップ)", expanded=True):
     tab1, tab2 = st.tabs(["👥 メンバー選択", "🃏 施策実行"])
@@ -227,7 +235,8 @@ with st.expander("⚙️ メンバーと施策を選ぶ (ここをタップ)", e
             hide_index=True,
             on_select="rerun",
             selection_mode="multi-row",
-            height=300 # スクロールしやすい高さ
+            height=300, # スクロールしやすい高さ
+            key="df_chars_selection" # ★重要：keyを指定して状態を保持する
         )
         
         # 選択された行のインデックスを取得
@@ -253,7 +262,8 @@ with st.expander("⚙️ メンバーと施策を選ぶ (ここをタップ)", e
             hide_index=True,
             on_select="rerun",
             selection_mode="multi-row",
-            height=300
+            height=300,
+            key="df_pols_selection" # ★重要：keyを指定して状態を保持する
         )
         
         # 選択された行のインデックスを取得
@@ -354,44 +364,45 @@ with st.expander("🎲 サイコロの出目を見る"):
 # --- メンバー表示 ---
 st.subheader("📊 組織メンバー")
 
-cols = st.columns(3)
-for i, res in enumerate(char_results):
-    with cols[i % 3]:
-        if res["is_safe"]:
-            border_color = "#00c853"
-            bg_color = "#f1f8e9"
-            status_icon = "🛡️SAFE"
-            footer_text = "✅ 安泰"
-            footer_color = "#2e7d32"
-        else:
-            border_color = "#ff5252"
-            bg_color = "#fffbee"
-            status_icon = "⚠️RISK"
-            risk_icons = " ".join(res['risks'])
-            footer_text = f"🎲 {risk_icons} でOUT" 
-            footer_color = "#c62828"
+if char_results:
+    cols = st.columns(3)
+    for i, res in enumerate(char_results):
+        with cols[i % 3]:
+            if res["is_safe"]:
+                border_color = "#00c853"
+                bg_color = "#f1f8e9"
+                status_icon = "🛡️SAFE"
+                footer_text = "✅ 安泰"
+                footer_color = "#2e7d32"
+            else:
+                border_color = "#ff5252"
+                bg_color = "#fffbee"
+                status_icon = "⚠️RISK"
+                risk_icons = " ".join(res['risks'])
+                footer_text = f"🎲 {risk_icons} でOUT" 
+                footer_color = "#c62828"
 
-        if res['data']['name'] == "社長":
-            status_icon = "👑 社長"
-            footer_text = "鉄壁"
+            if res['data']['name'] == "社長":
+                status_icon = "👑 社長"
+                footer_text = "鉄壁"
 
-        tags_str = "".join([f"<span style='font-size:10px; border:1px solid #ccc; border-radius:3px; padding:1px 3px; margin-right:3px; background:white;'>{t}</span>" for t in res["tags"]])
-        
-        html_card = (
-            f'<div class="member-card" style="border-left: 5px solid {border_color}; background-color: {bg_color};">'
-            f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">'
-            f'  <div style="font-weight:bold; font-size:0.9em; color:{border_color}">{status_icon}</div>'
-            f'  <div style="font-size:0.8em; font-weight:bold; color:#555">力: {res["power"]}</div>'
-            f'</div>'
-            f'<div style="font-weight:bold; font-size:1.1em; margin-bottom:2px;">{res["data"]["name"]}</div>'
-            f'<div style="font-size:0.85em; color:#666; margin-bottom:5px;">{"".join(res["data"]["icons"])}</div>'
-            f'<div style="margin-bottom:8px; min-height:16px;">{tags_str}</div>'
-            f'<div style="border-top:1px dashed {border_color}; padding-top:4px; font-size:0.85em; color:{footer_color}; text-align:right; font-weight:bold;">'
-            f'{footer_text}'
-            f'</div>'
-            f'</div>'
-        )
-        st.markdown(html_card, unsafe_allow_html=True)
+            tags_str = "".join([f"<span style='font-size:10px; border:1px solid #ccc; border-radius:3px; padding:1px 3px; margin-right:3px; background:white;'>{t}</span>" for t in res["tags"]])
+            
+            html_card = (
+                f'<div class="member-card" style="border-left: 5px solid {border_color}; background-color: {bg_color};">'
+                f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">'
+                f'  <div style="font-weight:bold; font-size:0.9em; color:{border_color}">{status_icon}</div>'
+                f'  <div style="font-size:0.8em; font-weight:bold; color:#555">力: {res["power"]}</div>'
+                f'</div>'
+                f'<div style="font-weight:bold; font-size:1.1em; margin-bottom:2px;">{res["data"]["name"]}</div>'
+                f'<div style="font-size:0.85em; color:#666; margin-bottom:5px;">{"".join(res["data"]["icons"])}</div>'
+                f'<div style="margin-bottom:8px; min-height:16px;">{tags_str}</div>'
+                f'<div style="border-top:1px dashed {border_color}; padding-top:4px; font-size:0.85em; color:{footer_color}; text-align:right; font-weight:bold;">'
+                f'{footer_text}'
+                f'</div>'
+                f'</div>'
+            )
+            st.markdown(html_card, unsafe_allow_html=True)
 
 # --- 施策表示 ---
 if active_policies:

@@ -6,62 +6,62 @@ import pandas as pd
 # ==========================================
 st.set_page_config(page_title="LODU Game Mobile", layout="wide", initial_sidebar_state="collapsed")
 
-# --- カスタムCSS（スマホ最適化・文字サイズ拡大版） ---
+# --- カスタムCSS（スマホ最適化・文字サイズ拡大・ダークモード対応版） ---
 st.markdown("""
 <style>
     /* ベースフォントとサイズ調整 */
     html, body, [class*="css"] {
         font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', sans-serif;
-        font-size: 18px; /* 基本サイズをアップ */
+        font-size: 18px; 
     }
     
     /* スコアボード */
     .score-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* 幅を少し広げる */
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
         gap: 10px;
-        background: #ffffff;
+        background: #ffffff; /* 背景白 */
         padding: 15px;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         margin-bottom: 25px;
         text-align: center;
+        color: #333333; /* ★ダークモード対策：文字色を黒に強制 */
     }
     .score-item {
         display: flex; flex-direction: column; justify-content: center; align-items: center;
         margin-bottom: 5px;
     }
     .score-label { 
-        font-size: 13px; /* 11px -> 13px */
-        color: #666; 
+        font-size: 13px; 
+        color: #666666 !important; /* ★強制的に濃いグレー */
         white-space: nowrap; 
         margin-bottom: 2px;
     }
     .score-value { 
-        font-size: 20px; /* 16px -> 20px */
+        font-size: 20px; 
         font-weight: bold; 
-        color: #333; 
+        color: #333333 !important; /* ★強制的に黒 */
         line-height: 1.2;
     }
     
     /* 施策カード */
     .policy-card {
-        background: white; border: 1px solid #ddd; padding: 15px; /* 余白拡大 */
+        background: white; 
+        border: 1px solid #ddd; 
+        padding: 15px;
         border-radius: 8px; margin-bottom: 12px; 
         display: flex; justify-content: space-between; align-items: center;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        color: #333333; /* ★ダークモード対策：文字色を黒に強制 */
     }
     .tag {
-        font-size: 0.85em; /* タグも少し大きく */
+        font-size: 0.85em;
         padding: 4px 6px; 
         border-radius: 4px; 
         margin-left: 4px;
         white-space: nowrap;
     }
-    
-    /* データフレーム調整 */
-    thead tr th:first-child { display: none }
-    tbody th { display: none }
     
     /* メンバーカードのスタイル */
     .member-card {
@@ -69,7 +69,12 @@ st.markdown("""
         border-radius: 8px;
         margin-bottom: 10px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        color: #333333; /* ★ダークモード対策：文字色を黒に強制 */
     }
+
+    /* データフレーム調整 */
+    thead tr th:first-child { display: none }
+    tbody th { display: none }
 </style>
 """, unsafe_allow_html=True)
 
@@ -361,7 +366,7 @@ st.markdown(f"""
 <div class="score-grid">
     <div class="score-item">
         <div class="score-label">🏆 チーム仕事力</div>
-        <div class="score-value" style="color:#d32f2f; font-size:26px;">{total_power}</div>
+        <div class="score-value" style="color:#d32f2f !important; font-size:26px;">{total_power}</div>
     </div>
     <div class="score-item">
         <div class="score-label">🛡️ 離職防止</div>
@@ -414,7 +419,7 @@ if char_results:
                 status_icon = "👑 社長"
                 footer_text = "鉄壁"
 
-            tags_str = "".join([f"<span style='font-size:12px; border:1px solid #ccc; border-radius:3px; padding:2px 4px; margin-right:3px; background:white;'>{t}</span>" for t in res["tags"]])
+            tags_str = "".join([f"<span style='font-size:12px; border:1px solid #ccc; border-radius:3px; padding:2px 4px; margin-right:3px; background:white; color:#333;'>{t}</span>" for t in res["tags"]])
             
             html_card = (
                 f'<div class="member-card" style="border-left: 6px solid {border_color}; background-color: {bg_color};">'
@@ -422,7 +427,7 @@ if char_results:
                 f'  <div style="font-weight:bold; font-size:1.0em; color:{border_color}">{status_icon}</div>'
                 f'  <div style="font-size:0.95em; font-weight:bold; color:#555">力: {res["power"]}</div>'
                 f'</div>'
-                f'<div style="font-weight:bold; font-size:1.2em; margin-bottom:4px;">{res["data"]["name"]}</div>'
+                f'<div style="font-weight:bold; font-size:1.2em; margin-bottom:4px; color:#333;">{res["data"]["name"]}</div>'
                 f'<div style="font-size:1.0em; color:#666; margin-bottom:8px;">{"".join(res["data"]["icons"])}</div>'
                 f'<div style="margin-bottom:10px; min-height:18px;">{tags_str}</div>'
                 f'<div style="border-top:1px dashed {border_color}; padding-top:6px; font-size:0.95em; color:{footer_color}; text-align:right; font-weight:bold;">'

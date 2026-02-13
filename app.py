@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import time # ポップアップ表示用
+import time
 
 # ==========================================
 # 0. 設定 & データ定義
@@ -195,45 +195,43 @@ CHARACTERS_DB = [
 POLICIES_DB = [
     {"name": "短時間勤務", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
     {"name": "ケア支援（保育/介護補助）", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
-    {"name": "ユニーバーサルデザインサポート", "target": ["💚"], "cost": 2, "power": 2, "type": ["shield", "power"]},
+    {"name": "ユニーバーサルデザインサポート", "target": ["💚"], "cost": 3, "power": 2, "type": ["shield", "power"]},
     {"name": "各種申請ガイド＆相談窓口", "target": ["💚"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
-    {"name": "男性育休", "target": ["💚"], "cost": 2, "power": 0, "type": ["recruit", "promote", "shield"]},
+    {"name": "ウェルビーイング表彰", "target": ["💚"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},
     {"name": "転勤支援", "target": ["🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
     {"name": "就労在留支援", "target": ["🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
-    {"name": "LGBTQ+アライコミュニティ", "target": ["🌈"], "cost": 2, "power": 0, "type": ["recruit", "promote", "shield"]},
-    {"name": "指導員制度", "target": ["🌈"], "cost": 2, "power": 2, "type": ["promote", "power"]},
-    {"name": "清和会", "target": ["⚖️"], "cost": 1, "power": 0, "type": ["shield"]},
-    {"name": "メンター制度", "target": ["💚", "📖"], "cost": 2, "power": 1, "type": ["promote", "shield","power"]},
+    {"name": "メンター制度", "target": ["💚", "📖"], "cost": 2, "power": 1, "type": ["promote", "shield"]},
     {"name": "リターンシップ(復職支援)", "target": ["💚", "📖"], "cost": 2, "power": 0, "type": ["recruit", "promote"]},
     {"name": "復帰ブリッジ（育休/介護）", "target": ["💚", "📖"], "cost": 1, "power": 1, "type": ["promote", "shield", "power"]},
-    {"name": "テレワーク・ワーケーション制度", "target": [ "💚","🌏"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
-    {"name": "多言語対応", "target": ["💚","🌏"], "cost": 2, "power": 2, "type": ["recruit", "power"]},
-    {"name": "サテライト/在宅手当", "target": ["💚","🌏"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
-    {"name": "ウェルビーイング表彰", "target": ["💚","🌈"], "cost": 2, "power": 2, "type": ["recruit", "shield", "power"]},    
+    {"name": "テレワーク・ワーケーション制度", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
+    {"name": "多言語対応", "target": ["🌏", "💚"], "cost": 2, "power": 2, "type": ["recruit", "power"]},
+    {"name": "サテライト/在宅手当", "target": ["🌏", "💚"], "cost": 1, "power": 1, "type": ["recruit", "shield", "power"]},
     {"name": "障がい者インクルージョンコミュニティ", "target": ["💚", "🌈"], "cost": 2, "power": 0, "type": ["promote", "shield"]},
     {"name": "通勤交通費支給", "target": ["💚", "⚖️"], "cost": 1, "power": 0, "type": ["recruit"]},
     {"name": "1on1", "target": ["📖", "🌏"], "cost": 2, "power": 3, "type": ["shield", "power"]},
-    {"name": "アルムナイ/ブーメラン採用", "target": ["📖", "🌏"], "cost": 1, "power": 0, "type": ["recruit", "shield"]},
-    {"name": "グローバルタレントマネジメント", "target": ["🌏"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
+    {"name": "アルムナイ/ブーメラン採用", "target": ["📖", "🌏"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
+    {"name": "グローバルタレントマネジメント", "target": ["📖", "🌏"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
     {"name": "社内公募・FA制度", "target": ["📖", "🌈"], "cost": 2, "power": 1, "type": ["promote", "shield", "power"]},
+    {"name": "指導員制度", "target": ["📖", "🌈"], "cost": 2, "power": 2, "type": ["promote", "power"]},
     {"name": "アンコンシャス・バイアス研修", "target": ["📖", "🌈"], "cost": 2, "power": 0, "type": ["recruit", "shield"]},
     {"name": "DVO(DNP価値目標制度)制度と評価制度", "target": ["📖", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
     {"name": "キャリア自律支援金の支給", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["promote", "power"]},
     {"name": "職群別キャリア・スキルマップの可視化", "target": ["📖", "⚖️"], "cost": 1, "power": 1, "type": ["promote", "power"]},
-    {"name": "社内複業制度", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["recruit", "promote", "power"]},
-    {"name": "同性パートナーシップ制度", "target": [ "🌈","⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
+    {"name": "社内複業制度", "target": ["📖", "⚖️"], "cost": 3, "power": 3, "type": ["recruit", "promote", "shield", "power"]},
+    {"name": "同性パートナーシップ制度", "target": ["⚖️", "🌈"], "cost": 1, "power": 0, "type": ["recruit", "promote", "shield"]},
     {"name": "スポンサーシッププログラム", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["promote"]},
     {"name": "面接官トレーニング", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["recruit", "promote"]},
-    {"name": "インクルージョンループ", "target": ["🌈", "⚖️"], "cost": 3, "power": 3, "type": ["promote", "shield", "power"]},
+    {"name": "インクルージョンループ", "target": ["🌈", "⚖️"], "cost": 2, "power": 3, "type": ["promote", "shield", "power"]},
     {"name": "キャリアサポート休暇・ライフサポート休暇", "target": ["🌈", "⚖️"], "cost": 2, "power": 1, "type": ["shield", "power"]},
     {"name": "施設（社員食堂、診療所、契約保養施設等）の充実", "target": ["🌈", "⚖️"], "cost": 2, "power": 0, "type": ["recruit", "shield"]},
     {"name": "マネジメントフィードバック（360度評価）", "target": ["🌈", "⚖️"], "cost": 1, "power": 0, "type": ["promote", "shield"]},
-    {"name": "ミドル・シニア向けキャリア自律支援", "target": ["💚","📖","⚖️"], "cost": 2, "power": 1, "type": ["recruit", "power"]},
-    {"name": "オープン・ドア・ルーム（内部通報制度）", "target": ["📖","🌈","⚖️"], "cost": 1, "power": 0, "type": ["shield"]},
-    {"name": "タレントマネジメントシステムの活用", "target": ["📖","🌈","🌏"], "cost": 2, "power": 0, "type": ["recruit"]},
+    {"name": "ミドル・シニア向けキャリア自律支援", "target": ["📖", "💚", "⚖️"], "cost": 2, "power": 1, "type": ["recruit", "power"]},
+    {"name": "オープン・ドア・ルーム（内部通報制度）", "target": ["🌈", "📖", "⚖️"], "cost": 1, "power": 0, "type": ["shield"]},
+    {"name": "タレントマネジメントシステムの活用", "target": ["🌈", "📖", "⚖️"], "cost": 2, "power": 0, "type": ["recruit"]},
 ]
 
-# ソート用関数（キャッシュ化を解除して即時反映させる）
+# ソート用関数（キャッシュ化して高速化）
+@st.cache_data
 def get_sorted_data():
     def get_sort_priority_icons(icons_list):
         if len(icons_list) > 1: return 99
@@ -249,18 +247,21 @@ sorted_chars, sorted_policies = get_sorted_data()
 # ==========================================
 # 1. 状態管理 & 初期セットアップ
 # ==========================================
-st.title("DE&I経営ゲーム")
+st.title("🎲 DE&I 組織シミュレーター")
 
 # セッション状態の初期化
 if "is_startup_completed" not in st.session_state:
     st.session_state.is_startup_completed = False # 初期フェーズ完了フラグ
-if "initial_members" not in st.session_state:
-    st.session_state.initial_members = [] # 最初に選んだ2名
-
+    
 if "selected_char_rows" not in st.session_state:
     st.session_state.selected_char_rows = []
 if "selected_policy_rows" not in st.session_state:
     st.session_state.selected_policy_rows = []
+
+# アクティブメンバーのインデックス管理
+# 参加中のメンバーのインデックス(sorted_chars内)を保持する
+if "active_member_indices" not in st.session_state:
+    st.session_state.active_member_indices = []
 
 # ==========================================
 # 2. フェーズ分岐処理
@@ -292,7 +293,8 @@ if not st.session_state.is_startup_completed:
     # 2名選択されたらボタンを押せるようにする
     if len(temp_init_members) == 2:
         if st.button("🚀 この2名でスタート！", use_container_width=True, type="primary"):
-            st.session_state.initial_members = temp_init_members
+            # 初期メンバーのインデックスを保存し、次のフェーズでデフォルト選択状態にする
+            st.session_state.active_member_indices = init_indices
             st.session_state.is_startup_completed = True
             st.rerun()
     elif len(temp_init_members) > 2:
@@ -300,17 +302,13 @@ if not st.session_state.is_startup_completed:
     else:
         st.caption(f"あと {2 - len(temp_init_members)} 名選んでください")
 
-    # フェーズAではここで処理を止めて画面を表示
-    active_chars = [] # まだ計算しない
+    active_chars = [] 
 
 # --- フェーズB: メインゲーム (施策 & 追加採用) ---
 else:
-    # 確定済みの初期メンバー
-    init_members = st.session_state.initial_members
-    
     # メイン設定エリア
     with st.expander("⚙️ 施策実行・追加採用 (ここをタップ)", expanded=True):
-        tab1, tab2 = st.tabs(["🃏 ① 施策実行", "👥 ② 追加採用"])
+        tab1, tab2 = st.tabs(["🃏 ① 施策実行", "👥 ② メンバー管理"])
 
         # --- ① 施策選択 ---
         with tab1:
@@ -345,69 +343,85 @@ else:
             else:
                 st.warning("⚠️ 「採用」施策を選ぶと、追加メンバーが選べるようになります")
 
-        # --- ② 追加採用 (全表示 & バリデーション) ---
+        # --- ② メンバー管理（フィルタリング版） ---
         with tab2:
-            st.caption("👇 追加したいメンバーを選択してください（条件不一致の場合は警告が出ます）")
+            st.caption("👇 **「現在参加中」または「採用条件を満たす」メンバーのみ表示されています**")
+            st.caption("※ チェックを外すと離脱、チェックを入れると参加します")
             
-            # 初期メンバーに含まれていない人だけをリスト化
-            init_names = [m["name"] for m in init_members]
-            remaining_chars = [c for c in sorted_chars if c["name"] not in init_names]
-
-            if remaining_chars:
-                df_chars_recruit = pd.DataFrame(remaining_chars)
-                df_chars_recruit["選択用リスト"] = df_chars_recruit.apply(lambda x: f"{''.join(x['icons'])} {x['name']}", axis=1)
+            # ### 追加・変更 ###
+            # フィルタリングロジック:
+            # 1. 既に参加している人 (active_member_indicesに含まれる)
+            # 2. まだ参加していないが、採用条件を満たしている人 (recruit_enabled_iconsに含まれる属性を持つ)
+            # このどちらかの条件を満たす人のみをリストアップする
+            
+            display_indices = []
+            
+            for i, char in enumerate(sorted_chars):
+                is_active = i in st.session_state.active_member_indices
+                is_recruitable = set(char["icons"]).issubset(recruit_enabled_icons)
                 
-                # ★全員表示する
-                selection_event_recruits = st.dataframe(
-                    df_chars_recruit[["選択用リスト"]], 
-                    use_container_width=True,
+                # 「既に参加中」または「採用可能」なら表示リストに入れる
+                if is_active or is_recruitable:
+                    display_indices.append(i)
+            
+            # 表示用データフレーム作成
+            # 元の sorted_chars から、display_indices に該当する行だけを抜き出して作る
+            display_data = []
+            for idx in display_indices:
+                char = sorted_chars[idx]
+                is_active = idx in st.session_state.active_member_indices
+                display_data.append({
+                    "original_index": idx, # 元のインデックスを保持しておく（重要）
+                    "参加": is_active,
+                    "名前と属性": f"{''.join(char['icons'])} {char['name']}"
+                })
+                
+            df_display = pd.DataFrame(display_data)
+            
+            if not df_display.empty:
+                # データエディタ表示
+                edited_df = st.data_editor(
+                    df_display[["参加", "名前と属性"]],
+                    column_config={
+                        "参加": st.column_config.CheckboxColumn(
+                            "参加状況",
+                            help="チェックを入れるとメンバーに参加します",
+                            default=False,
+                        ),
+                        "名前と属性": st.column_config.TextColumn(
+                            "メンバー",
+                            disabled=True
+                        )
+                    },
+                    disabled=["名前と属性"],
                     hide_index=True,
-                    on_select="rerun",
-                    selection_mode="multi-row",
-                    height=300,
-                    key="df_recruits_selection" 
+                    use_container_width=True,
+                    height=400,
+                    key="editor_member_manage"
                 )
                 
-                recruit_indices = selection_event_recruits.selection.rows
+                # --- 変更の反映 ---
+                # 画面上で「参加」になっている行の original_index を集める
+                # edited_df の行順序は display_indices と同じなので、行番号を使って対応付ける
                 
-                # ★バリデーション & 強制選択解除ロジック
-                valid_indices = []
-                invalid_chars = []
+                # 現在画面上でチェックされている行のindex(0, 1, 2...)を取得
+                checked_rows = [i for i, x in enumerate(edited_df["参加"]) if x]
                 
-                for idx in recruit_indices:
-                    char = remaining_chars[idx]
-                    char_icons_set = set(char["icons"])
-                    
-                    # 採用条件（施策）の部分集合になっているかチェック
-                    if char_icons_set.issubset(recruit_enabled_icons):
-                        valid_indices.append(idx)
-                    else:
-                        invalid_chars.append(char)
+                # それを元の sorted_chars のインデックスに変換
+                new_active_indices_from_display = [df_display.iloc[i]["original_index"] for i in checked_rows]
                 
-                # エラーがある場合、ポップアップ(Toast)で警告し、状態を強制リセットしてリロード
-                if invalid_chars:
-                    # 名前を列挙して表示
-                    # invalid_names = "、".join([c["name"] for c in invalid_chars])
-                    msg = "採用の基盤が整っていないのでこの人を採用することができません"
-                    st.toast(f"🚫 {msg}", icon="⚠️")
-                    
-                    # ★重要：不正な選択を除外した状態をセッションステートに書き込む
-                    st.session_state["df_recruits_selection"]["selection"]["rows"] = valid_indices
-                    
-                    # リロードしてチェックを外す
+                # セッションステートと比較して変更があれば更新
+                # (セットに変換して比較することで順序の違いを無視)
+                if set(new_active_indices_from_display) != set(st.session_state.active_member_indices):
+                    st.session_state.active_member_indices = new_active_indices_from_display
                     st.rerun()
-                
-                # 有効なメンバーのみ採用リストに入れる
-                selected_recruits = [remaining_chars[i] for i in valid_indices]
-                
-                if len(selected_recruits) > 0:
-                    st.caption(f"現在 {len(selected_recruits)} 名を追加選択中")
             else:
-                st.info("全ての人材が選択済みです")
-                selected_recruits = []
+                st.info("表示できるメンバーがいません（採用施策を選んでください）")
 
-    # ★最終的なメンバーリスト = 初期メンバー + 有効な追加採用メンバー
-    active_chars = init_members + selected_recruits
+            st.caption(f"現在 {len(st.session_state.active_member_indices)} 名が参加中")
+
+    # ★最終的なメンバーリスト生成
+    active_chars = [sorted_chars[i] for i in st.session_state.active_member_indices]
 
 
 # ==========================================
@@ -475,7 +489,7 @@ if st.session_state.is_startup_completed:
             <div class="score-value">{shield_disp}</div>
         </div>
         <div class="score-item">
-            <div class="score-label">🔵 採用強化</div>
+            <div class="score-label">🔵 採用対象</div>
             <div class="score-value">{recruit_disp}</div>
         </div>
         <div class="score-item">
